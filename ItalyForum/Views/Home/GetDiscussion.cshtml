@@ -1,0 +1,33 @@
+﻿@model ItalyForum.Models.Discussion
+
+@{
+    ViewData["Title"] = "Discussion Details";
+}
+
+<h1>@Html.DisplayFor(model => model.Title)</h1>
+
+<div>
+    <p><strong>Created on:</strong> @Html.DisplayFor(model => model.CreateDate)</p>
+    <hr />
+    <img src="@Url.Content("/images/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid" style="max-width: 500px; max-height: 500px;" />
+    <p>
+        @Html.DisplayFor(model => model.Content)
+    </p>
+    <h5>Comments:</h5>
+    <a asp-action="Create" asp-controller="Comments" asp-route-discussionId="@Model.DiscussionId" class="btn btn-primary mb-3">Add New Comment</a>
+    <ul>
+        @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreateDate))
+        {
+            <li>
+                <p>@comment.Content</p>
+                <small class="text-muted">Posted on @comment.CreateDate</small>
+                <hr />
+            </li>
+        }
+    </ul>
+</div>
+<div>
+    <a asp-action="Index" asp-controller="Home">Back to Home</a> |
+    <a asp-action="Edit" asp-controller="Discussions" asp-route-id="@Model.DiscussionId">Edit</a> |
+    <a asp-action="Index" asp-controller="Discussions">Back to List</a>
+</div>

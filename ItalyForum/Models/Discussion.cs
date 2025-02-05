@@ -20,6 +20,8 @@ namespace ItalyForum.Models
 
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
 
     }
 }

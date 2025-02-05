@@ -4,20 +4,24 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h1> View Discussion Posts</h1>
+<h1>View Discussion Posts</h1>
 
-@foreach (var item in Model) {
-    <div style="background-color: #b2b2b2">
-        <p>
-            <!-- Display the image -->
-            <a href="@Url.Content("/Discussions/Details/" + item.DiscussionId)">
-                <img src="@Url.Content("/images/" + item.ImageFilename)" alt="@item.Title" class="image-thumb" ;" />
-            </a>
-                <a href="@Url.Content("/Discussions/Details/" + item.DiscussionId)">
-                    @item.Title
-                </a>
-            @item.CreateDate<br />
-        </p>
+@foreach (var item in Model)
+{
+    <div class="card mb-3">
+        <div class="row no-gutters">
+            <div class="col-md-2">
+                <img src="@Url.Content("/images/" + item.ImageFilename)" alt="@item.Title" class="image-thumb" />
+            </div>
+            <div class="col-md-10">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="@Url.Action("GetDiscussion", new { id = item.DiscussionId })">@item.Title</a>
+                    </h5>
+                    <p class="card-text"><small class="text-muted">Created on @item.CreateDate</small></p>
+                    <p class="card-text"><small class="text-muted">@item.Comments.Count comments</small></p>
+                </div>
+            </div>
+        </div>
     </div>
 }
-
