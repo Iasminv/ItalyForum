@@ -1,8 +1,23 @@
-﻿@{
+﻿@model List<ItalyForum.Models.Discussion>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1> View Discussion Posts</h1>
+
+@foreach (var item in Model) {
+    <div style="background-color: #b2b2b2">
+        <p>
+            <!-- Display the image -->
+            <a href="@Url.Content("/Discussions/Details/" + item.DiscussionId)">
+                <img src="@Url.Content("/images/" + item.ImageFilename)" alt="@item.Title" class="image-thumb" ;" />
+            </a>
+                <a href="@Url.Content("/Discussions/Details/" + item.DiscussionId)">
+                    @item.Title
+                </a>
+            @item.CreateDate<br />
+        </p>
+    </div>
+}
+

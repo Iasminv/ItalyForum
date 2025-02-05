@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ItalyForum.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<ItalyForumContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ItalyForumContext") ?? throw new InvalidOperationException("Connection string 'ItalyForumContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

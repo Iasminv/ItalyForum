@@ -1,0 +1,22 @@
+﻿@model ItalyForum.Models.Discussion
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@Html.DisplayFor(model => model.Title)</h1>
+
+<div>
+    <p>@Html.DisplayFor(model => model.CreateDate)</p>
+    <hr />
+    <img src="@Url.Content("/images/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid" style="max-width: 500px; max-height: 500px;" />
+    <p>
+        @Html.DisplayFor(model => model.Content)
+    </p>
+
+</div>
+<div>
+    <a asp-action="Index" asp-controller="Home">Back to Home</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.DiscussionId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
