@@ -4,24 +4,28 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h1>View Discussion Posts</h1>
-
-@foreach (var item in Model)
-{
-    <div class="card mb-3">
-        <div class="row no-gutters">
-            <div class="col-md-2">
-                <img src="@Url.Content("/images/" + item.ImageFilename)" alt="@item.Title" class="image-thumb" />
-            </div>
-            <div class="col-md-10">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="@Url.Action("GetDiscussion", new { id = item.DiscussionId })">@item.Title</a>
-                    </h5>
-                    <p class="card-text"><small class="text-muted">Created on @item.CreateDate</small></p>
-                    <p class="card-text"><small class="text-muted">@item.Comments.Count comments</small></p>
+<div class="container mt-4">
+    <div class="container-header text-center mb-4">
+        <h1>Italy Forum</h1>
+        <a asp-action="Create" asp-controller="Discussions" class="btn btn-light mt-3">Create New Discussion</a>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3">
+            <div class="row no-gutters">
+                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                    <img src="@Url.Content("/images/" + item.ImageFilename)" alt="@item.Title" class="image-thumb" />
+                </div>
+                <div class="col-md-10">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="@Url.Action("GetDiscussion", new { id = item.DiscussionId })" class="text-decoration-none">@item.Title</a>
+                        </h5>
+                        <p class="card-text"><small class="text-muted">Created on @item.CreateDate</small></p>
+                        <p class="card-text"><small class="text-muted">@item.Comments.Count comments</small></p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-}
+    }
+</div>

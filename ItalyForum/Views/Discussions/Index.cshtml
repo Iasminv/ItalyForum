@@ -1,53 +1,48 @@
 ﻿@model IEnumerable<ItalyForum.Models.Discussion>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Home Page";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFilename)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFilename)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DiscussionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DiscussionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DiscussionId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container mt-4">
+    <div class="container-header text-center mb-4">
+        <h1>Discussions</h1>
+        <a asp-action="Create" asp-controller="Discussions" class="btn btn-light mt-3"><i class="bi bi-plus-circle"></i> Create New Discussion</a>
+    </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <table class="table table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Title)</th>
+                        <th>@Html.DisplayNameFor(model => model.Content)</th>
+                        <th>Image</th>
+                        <th>@Html.DisplayNameFor(model => model.CreateDate)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                            <td class="text-truncate" style="max-width: 200px;">@Html.DisplayFor(modelItem => item.Content)</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageFilename))
+                                {
+                                    <img src="~/images/@item.ImageFilename" alt="@item.Title" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                                }
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.CreateDate)</td>
+                            <td class="text-center">
+                                <a asp-action="Edit" asp-route-id="@item.DiscussionId" class="btn btn-sm btn-light"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-action="Details" asp-route-id="@item.DiscussionId" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.DiscussionId" class="btn btn-sm btn-danger"><i class="bi bi-trash3"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

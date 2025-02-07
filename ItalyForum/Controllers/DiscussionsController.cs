@@ -13,10 +13,12 @@ namespace ItalyForum.Controllers
     public class DiscussionsController : Controller
     {
         private readonly ItalyForumContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public DiscussionsController(ItalyForumContext context)
+        public DiscussionsController(ItalyForumContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Discussions
@@ -99,7 +101,7 @@ namespace ItalyForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFile,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFile,ImageFilename,CreateDate")] Discussion discussion)
         {
             if (id != discussion.DiscussionId)
             {
@@ -110,6 +112,29 @@ namespace ItalyForum.Controllers
             {
                 try
                 {
+                    if (discussion.ImageFile != null)
+                    {
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + discussion.ImageFile.FileName;
+                        var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                        var filePath = Path.Combine(uploads, uniqueFileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await discussion.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        // Delete the old image file if exists
+                        if (!string.IsNullOrEmpty(discussion.ImageFilename))
+                        {
+                            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", discussion.ImageFilename);
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        discussion.ImageFilename = uniqueFileName;
+                    }
+
                     _context.Update(discussion);
                     await _context.SaveChangesAsync();
                 }
@@ -128,6 +153,7 @@ namespace ItalyForum.Controllers
             }
             return View(discussion);
         }
+
 
         // GET: Discussions/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -155,10 +181,16 @@ namespace ItalyForum.Controllers
             var discussion = await _context.Discussion.FindAsync(id);
             if (discussion != null)
             {
-                _context.Discussion.Remove(discussion);
-            }
+                // Delete the image file
+                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", discussion.ImageFilename);
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
 
-            await _context.SaveChangesAsync();
+                _context.Discussion.Remove(discussion);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 
