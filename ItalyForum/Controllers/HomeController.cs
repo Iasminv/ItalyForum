@@ -24,6 +24,7 @@ namespace ItalyForum.Controllers
             {
                 List<Discussion> discussions = await _context.Discussion
                     .Include(d => d.Comments)
+                    .Include(d => d.ApplicationUser)
                     .OrderByDescending(d => d.CreateDate)
                     .ToListAsync();
 
@@ -47,6 +48,8 @@ namespace ItalyForum.Controllers
 
             var discussion = await _context.Discussion
                 .Include(d => d.Comments)
+                    .ThenInclude(c => c.ApplicationUser)  
+                .Include(d => d.ApplicationUser) 
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
 
             if (discussion == null)
@@ -81,6 +84,33 @@ namespace ItalyForum.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        // Display user profile
+        public async Task<IActionResult> Profile(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Get user's discussions
+            var discussions = await _context.Discussion
+                .Where(d => d.ApplicationUserId == id)
+                .Include(d => d.Comments)
+                .OrderByDescending(d => d.CreateDate)
+                .ToListAsync();
+
+            ViewBag.User = user;
+            return View(discussions);
         }
     }
 }

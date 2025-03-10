@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using ItalyForum.Data;
 
 namespace ItalyForum.Models
 {
@@ -22,6 +23,10 @@ namespace ItalyForum.Models
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
+        // Foreign key (AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
 
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } 
     }
 }

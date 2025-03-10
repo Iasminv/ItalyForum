@@ -12,16 +12,22 @@
         <div class="card-body">
             <form asp-action="Create" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <!-- Add title -->
                 <div class="form-group mb-3">
                     <label asp-for="Title" class="form-label"></label>
                     <input asp-for="Title" class="form-control" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
+
+                <!-- Add content -->
                 <div class="form-group mb-3">
                     <label asp-for="Content" class="form-label"></label>
                     <textarea asp-for="Content" class="form-control"></textarea>
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
+
+                <!-- Add image -->
                 <div class="form-group mb-3">
                     <label asp-for="ImageFile" class="form-label"></label>
                     <input type="file" asp-for="ImageFile" class="form-control" />

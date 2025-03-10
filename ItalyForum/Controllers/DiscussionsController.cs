@@ -7,24 +7,36 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ItalyForum.Data;
 using ItalyForum.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ItalyForum.Controllers
 {
+    [Authorize]
     public class DiscussionsController : Controller
     {
         private readonly ItalyForumContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DiscussionsController(ItalyForumContext context, IWebHostEnvironment webHostEnvironment)
+        public DiscussionsController(ItalyForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
-            _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
         }
 
         // GET: Discussions
+        // Update the Index method in DiscussionsController.cs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Discussion.ToListAsync());
+            // Get the current user's ID
+            var userId = _userManager.GetUserId(User);
+
+            // Filter discussions to only show the current user's posts
+            var userDiscussions = await _context.Discussion
+                .Where(d => d.ApplicationUserId == userId)
+                .ToListAsync();
+
+            return View(userDiscussions);
         }
 
         // GET: Discussions/Details/5
@@ -52,15 +64,14 @@ namespace ItalyForum.Controllers
         }
 
         // POST: Discussions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile,CreateDate")] Discussion discussion)
         {
             if (ModelState.IsValid)
             {
-                // Rename the uploaded file to a guid (unique filename)
+                discussion.ApplicationUserId = _userManager.GetUserId(User);
+
                 if (discussion.ImageFile != null)
                 {
                     discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
@@ -78,8 +89,6 @@ namespace ItalyForum.Controllers
             return View(discussion);
         }
 
-
-
         // GET: Discussions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -89,16 +98,14 @@ namespace ItalyForum.Controllers
             }
 
             var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion == null)
+            if (discussion == null || discussion.ApplicationUserId != _userManager.GetUserId(User))
             {
-                return NotFound();
+                return Forbid();
             }
             return View(discussion);
         }
 
         // POST: Discussions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFile,ImageFilename,CreateDate")] Discussion discussion)
@@ -108,24 +115,28 @@ namespace ItalyForum.Controllers
                 return NotFound();
             }
 
+            if (discussion.ApplicationUserId != _userManager.GetUserId(User))
+            {
+                return Forbid();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     if (discussion.ImageFile != null)
                     {
-                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + discussion.ImageFile.FileName;
-                        var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                        var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
+                        var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
                         var filePath = Path.Combine(uploads, uniqueFileName);
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
                             await discussion.ImageFile.CopyToAsync(fileStream);
                         }
 
-                        // Delete the old image file if exists
                         if (!string.IsNullOrEmpty(discussion.ImageFilename))
                         {
-                            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", discussion.ImageFilename);
+                            var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
                             if (System.IO.File.Exists(oldImagePath))
                             {
                                 System.IO.File.Delete(oldImagePath);
@@ -154,7 +165,6 @@ namespace ItalyForum.Controllers
             return View(discussion);
         }
 
-
         // GET: Discussions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -165,9 +175,9 @@ namespace ItalyForum.Controllers
 
             var discussion = await _context.Discussion
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
-            if (discussion == null)
+            if (discussion == null || discussion.ApplicationUserId != _userManager.GetUserId(User))
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(discussion);
@@ -179,13 +189,15 @@ namespace ItalyForum.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion != null)
+            if (discussion != null && discussion.ApplicationUserId == _userManager.GetUserId(User))
             {
-                // Delete the image file
-                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", discussion.ImageFilename);
-                if (System.IO.File.Exists(imagePath))
+                if (!string.IsNullOrEmpty(discussion.ImageFilename))
                 {
-                    System.IO.File.Delete(imagePath);
+                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
                 }
 
                 _context.Discussion.Remove(discussion);

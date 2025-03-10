@@ -15,7 +15,9 @@
         <img src="~/images/headerImg.png" alt="Header Image" class="img-fluid" style="width: 100%; max-height: 200px; object-fit: cover;" />
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand mx-auto fw-bold" asp-area="" asp-controller="Home" asp-action="Index">ItalyForum</a>
+
+                <!-- Navbar -->
+                <a class="navbar-brand mx-auto fw-bold" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-flag me-2"></i>ItalyForum</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -23,13 +25,12 @@
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link link-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+
+                        <!-- Register Manager My Discussions options -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Discussions" asp-action="Index">My Posts</a>
+                            <partial name="_LoginPartial">
                         </li>
                     </ul>
                 </div>
@@ -37,12 +38,14 @@
         </nav>
     </header>
 
+    <!-- Main -->
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+    <!-- Footer -->
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2025 - ItalyForum - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

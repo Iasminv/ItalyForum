@@ -6,26 +6,45 @@
 
 <div class="container mt-4">
     <div class="container-header text-center mb-4">
-        <h1>Italy Forum</h1>
-        <a asp-action="Create" asp-controller="Discussions" class="btn btn-light mt-3">Create New Discussion</a>
+        <h1 class="display-4">Italy Forum</h1>
+
+        <!-- Create New Discussion Button -->
+        <a asp-action="Create" asp-controller="Discussions" class="btn btn-light mt-2">
+            <i class="bi bi-plus-circle me-2"></i>Create New Discussion
+        </a>
     </div>
-    @foreach (var item in Model)
-    {
-        <div class="card mb-3">
-            <div class="row no-gutters">
-                <div class="col-md-2 d-flex align-items-center justify-content-center">
-                    <img src="@Url.Content("/images/" + item.ImageFilename)" alt="@item.Title" class="image-thumb" />
-                </div>
-                <div class="col-md-10">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="@Url.Action("GetDiscussion", new { id = item.DiscussionId })" class="text-decoration-none">@item.Title</a>
-                        </h5>
-                        <p class="card-text"><small class="text-muted">Created on @item.CreateDate</small></p>
-                        <p class="card-text"><small class="text-muted">@item.Comments.Count comments</small></p>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-12">
+                <div class="card mb-3 discussion-item">
+                    <div class="row g-0">
+                        <div class="col-md-2 d-flex align-items-center justify-content-center p-3">
+                            <img src="@Url.Content("/images/" + item.ImageFilename)" alt="@item.Title" class="image-thumb" />
+                        </div>
+                        <div class="col-md-10">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <a href="@Url.Action("GetDiscussion", new { id = item.DiscussionId })" class="text-decoration-none text-danger">@item.Title</a>
+                                </h5>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person-circle me-2 text-muted"></i>
+                                    <a asp-action="Profile" asp-controller="Home" asp-route-id="@item.ApplicationUserId" class="text-success">
+                                        @(item.ApplicationUser?.Name ?? "Unknown user")
+                                    </a>
+                                    <span class="mx-2">|</span>
+                                    <i class="bi bi-calendar3 me-2 text-muted"></i>
+                                    <small class="text-muted">@item.CreateDate.ToString("MMM d, yyyy")</small>
+                                    <span class="mx-2">|</span>
+                                    <i class="bi bi-chat-dots me-2 text-muted"></i>
+                                    <small class="text-muted">@item.Comments.Count comments</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>

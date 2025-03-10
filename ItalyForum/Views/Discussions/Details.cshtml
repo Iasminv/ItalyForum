@@ -5,24 +5,29 @@
 }
 
 <div class="container mt-4">
+    <!-- Discussion Title -->
     <div class="container-header text-center mb-4">
         <h1>@Html.DisplayFor(model => model.Title)</h1>
     </div>
 
+    <!-- Create Date and time -->
     <div class="card mb-3">
         <div class="card-body">
             <p><strong>Created on:</strong> @Html.DisplayFor(model => model.CreateDate)</p>
             <hr />
+            <!-- Image -->
             <img src="@Url.Content("/images/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid mx-auto d-block" style="max-width: 500px; max-height: 500px;" />
+            <!-- Discussion content -->
             <p class="mt-3">
                 @Html.DisplayFor(model => model.Content)
             </p>
         </div>
     </div>
 
+    <!-- Back to home button -->
     <div class="mt-3 container-footer text-center">
-        <a asp-action="Index" asp-controller="Home" class="btn btn-light">Back to Home</a>
-        <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-light">Edit</a>
-        <a asp-action="Index" class="btn btn-light">Back to List</a>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-light">
+            <i class="bi bi-house me-1"></i> Back to Home
+        </a>
     </div>
 </div>

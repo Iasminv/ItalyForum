@@ -10,27 +10,23 @@
     </div>
     <div class="card mb-3">
         <div class="card-body">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <form asp-controller="Comments" asp-action="Create" method="post">
+
+                <!-- Create Comment -->
                 <div class="form-group mb-3">
-                    <label asp-for="Content" class="form-label"></label>
-                    <textarea asp-for="Content" class="form-control"></textarea>
+                    <label asp-for="Content" class="form-label">Comment</label>
+                    <textarea asp-for="Content" class="form-control" rows="5" required></textarea>
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
+
                 <input type="hidden" asp-for="DiscussionId" value="@ViewBag.DiscussionId" />
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="hidden" asp-for="ApplicationUserId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-danger">Submit Comment</button>
+                    <a asp-action="GetDiscussion" asp-controller="Home" asp-route-id="@ViewBag.DiscussionId" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
-<div class="text-center mt-3">
-        <a asp-action="GetDiscussion" asp-controller="Home" asp-route-id="@ViewBag.DiscussionId" class="btn btn-danger">Back to Discussion</a>
-    </div>
 </div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
